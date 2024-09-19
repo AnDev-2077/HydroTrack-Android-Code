@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="WaveViewStyle">
+        <item name="above_wave_color">@color/black</item>
+        <item name="blow_wave_color">@color/black</item>
+    </style>
+
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#DCF3FF</item>
+    </style>
+</resources>

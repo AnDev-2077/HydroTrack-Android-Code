@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="water">#0468A4</color>
+
+    <!-- APP BACKGROUND-->
+    <!--02B0FE-->
+    <color name="app_background">#DCF3FF</color>
+    <color name="header_background">#5BB0FE</color>
+    <color name="menu_background">#5BB0FE</color>
+    <color name="menu_item_select">#5BB0FE</color>
+    <color name="menu_item_unselect">#FEFEFE</color>
+    <!-- home-->
+    <color name="home_fecha">#FFFFFF</color>
+
+    <!--texttos-->
+    <color name="primary_color">#000000</color>
+    <color name="tank_border_color">#2E2F36</color>
+    <!-- notifiacion-->
+    <color name="noti_background">#FFFFFF</color>
+    <color name="noti_text">#2D8BF1</color>
+</resources>

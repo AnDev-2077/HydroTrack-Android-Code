@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Hidro Tank</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <style name="NoAnimationBottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemHorizontalTranslationEnabled">false
+        </item>
+        <item name="itemIconTint">@null
+        </item>
+    </style>
+
+
+
+
+</resources>
