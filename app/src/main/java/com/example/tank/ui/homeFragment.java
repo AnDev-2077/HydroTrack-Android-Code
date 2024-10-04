@@ -49,7 +49,7 @@ public class homeFragment extends Fragment {
     int mlBY = 2400;
     int ml =mlT;
 
-   public static int percentage = 40;
+   public static int percentage = 50;
 
     FragmentHomeBinding binding;
     int day = 2;
@@ -78,7 +78,7 @@ public class homeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        percentage = percentageT;
+
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,8 +30,18 @@ import com.example.tank.R;
 import com.example.tank.databinding.FragmentHistoryBinding;
 import com.example.tank.databinding.FragmentHomeBinding;
 import com.example.tank.databinding.FragmentSettingsBinding;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -45,7 +56,7 @@ public class HistoryFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-
+    int week = 2;
     private String mParam1;
     private String mParam2;
 
@@ -88,7 +99,7 @@ public class HistoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         createNotificationChannel();
 
-        binding.btn1.setOnClickListener(new View.OnClickListener() {
+       /* binding.btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showNotification("Nivel Tanque", "El tanque está completamente lleno.");
@@ -99,7 +110,70 @@ public class HistoryFragment extends Fragment {
             public void onClick(View v) {
                 showNotification("Nivel Tanque", "Tanque al "+homeFragment.percentage+"% de su capacidad");
             }
+        });*/
+        initData();
+    }
+    void initData() {
+        float[] newValues = new float[]{20, 30, 50, 70, 90, 80, 60};
+        updateChartData(newValues);
+        changeDay();
+    }
+
+    private void updateChartData(float[] values) {
+        LineChart lineChart = binding.lineChar;
+
+        ArrayList<Entry> entries = new ArrayList<>();
+        for (int i = 0; i < values.length; i++) {
+            entries.add(new Entry(i, values[i]));
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "");
+        lineChart.getLegend().setEnabled(false);
+        dataSet.setColor(getResources().getColor(R.color.water));
+        dataSet.setCircleColor(getResources().getColor(R.color.water));
+        dataSet.setValueTextColor(getResources().getColor(android.R.color.black));
+        dataSet.setLineWidth(4f);
+        dataSet.setCircleSize(6f);
+        dataSet.setDrawValues(false);
+        dataSet.setHighLightColor(getResources().getColor(R.color.water));
+        dataSet.setDrawFilled(true);
+        dataSet.setFillDrawable(getResources().getDrawable(R.drawable.gradient_fill));
+
+        LineData lineData = new LineData(dataSet);
+        lineChart.setData(lineData);
+
+        lineChart.setDragEnabled(false);
+        lineChart.setScaleEnabled(false);
+
+
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(new String[]{"L", "M", "X", "J", "V", "S", "D"})); // Etiquetas de los días
+        xAxis.setGranularity(1);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(14f);
+        xAxis.setTypeface(Typeface.DEFAULT_BOLD);
+
+
+        YAxis leftYAxis = lineChart.getAxisLeft();
+        leftYAxis.setAxisMaximum(100);
+        leftYAxis.setAxisMinimum(0);
+        leftYAxis.setDrawGridLines(true);
+        leftYAxis.setTextSize(14f);
+        leftYAxis.setTypeface(Typeface.DEFAULT_BOLD);
+
+
+        leftYAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                return (int) value + "%   ";
+            }
         });
+
+        lineChart.getAxisRight().setEnabled(false);
+        lineChart.getDescription().setEnabled(false);
+        lineChart.animateXY(800, 800);
+        lineChart.invalidate(); // Refresh
     }
 
     private void createNotificationChannel() {
@@ -144,5 +218,61 @@ public class HistoryFragment extends Fragment {
             notificationManager.notify(1, builder.build());
         }
     }
+    private void changeDay(){
+        binding.containerArrowRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                if( week<2){
+                    week++;
+
+                    binding.txtDay.setText(updateDay());
+
+                    binding.arrowRight.setAlpha(1.0f);
+                    if(week==2){
+                        binding.arrowRight.setAlpha(0.15f);
+                        binding.arrowLeft.setAlpha(1.0f);
+                    }else{
+                        binding.arrowLeft.setAlpha(1.0f);
+                    }
+                }
+            }
+        });
+        binding.containerArrowLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ( week > 1) {
+                    week--;
+                    binding.txtDay.setText(updateDay());
+                    binding.arrowLeft.setAlpha(1.0f);
+                    if(week==1) {
+                        binding.arrowLeft.setAlpha(0.15f);
+                        binding.arrowRight.setAlpha(1.0f);
+                    }else{
+                        binding.arrowRight.setAlpha(1.0f);
+                    }
+                }
+
+            }
+        });
+    }
+    String updateDay(){
+
+        switch (week){
+            case 1:
+
+                float[] newValuess = new float[]{10, 10, 30, 80, 30, 60, 40};
+                updateChartData(newValuess);
+                return "Semana pasada";
+            case 2:
+
+                float[] newValues = new float[]{20, 30, 50, 70, 90, 80, 60};
+                updateChartData(newValues);
+                return "Esta semana";
+            default:
+                float[] newValuesw = new float[]{20, 30, 50, 70, 90, 80, 60};
+                updateChartData(newValuesw);
+                return "Esta semana";
+        }
+    }
 }

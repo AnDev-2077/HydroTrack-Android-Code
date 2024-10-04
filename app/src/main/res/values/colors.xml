@@ -16,8 +16,11 @@
 
     <!--texttos-->
     <color name="primary_color">#000000</color>
+    <color name="primary_color_0_5">#5F6062</color>
     <color name="tank_border_color">#2E2F36</color>
     <!-- notifiacion-->
     <color name="noti_background">#FFFFFF</color>
     <color name="noti_text">#2D8BF1</color>
+
+
 </resources>
