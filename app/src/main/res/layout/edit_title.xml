@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:padding="15dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nuevo Titulo"
+            android:textStyle="bold"
+            android:textColor="@color/primary_color"
+            android:textSize="15sp"
+            android:layout_marginBottom="10dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+
+          >
+            <EditText
+                android:id="@+id/txt_title"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="15"
+                android:textColor="@color/primary_color"
+                android:backgroundTint="@color/header_background"
+                android:textCursorDrawable="@drawable/cursor_color"
+                />
+            <ImageView
+                android:id="@+id/btn_emojis"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_weight="2"
+
+                android:layout_gravity="center_vertical"
+
+                />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/txt_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#ff0000"
+            android:layout_marginBottom="5dp"
+
+            />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btn_Cancelar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancelar"
+                android:textColor="@color/header_background"
+                android:backgroundTint="@color/white"
+                app:layout_constraintEnd_toStartOf="@+id/btn_guardar"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="15sp"
+                />
+            <Button
+                android:id="@+id/btn_guardar"
+                android:text="Guardar"
+                android:textColor="@color/header_background"
+                android:backgroundTint="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

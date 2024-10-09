@@ -101,6 +101,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="310dp"
                 android:layout_margin="25dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="25dp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_color"
+                android:text="Porcentaje consumido por día"
+                android:textAlignment="center"
+                />
+
+
         </LinearLayout>
     </ScrollView>
 

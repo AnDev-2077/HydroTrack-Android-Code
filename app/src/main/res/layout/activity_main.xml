@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,14 +19,22 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="20dp"
-        android:paddingEnd="20dp">
+        android:paddingEnd="20dp"
+        >
         <TextView
+            android:id="@+id/title_g"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-                android:text="HydroTrak"
+                android:text="HydroTrakddddddddddddd"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:textSize="20dp"/>
+            android:textSize="20dp"
+            android:layout_marginEnd="5dp"/>
+        <ImageView
+            android:id="@+id/edit_title"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/pencil"/>
     </LinearLayout>
 
 

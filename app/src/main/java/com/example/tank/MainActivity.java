@@ -5,9 +5,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,8 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,6 +57,8 @@ import android.Manifest;
 
         ActivityMainBinding binding;
         private static final int PERMISSION_REQUEST_CODE = 123;
+        Dialog dialog;
+        SharedPreferences sharedPreferences;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -64,6 +72,7 @@ import android.Manifest;
             binding  = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 
+            init();
             initTabLayaut();
 
 
@@ -77,6 +86,78 @@ import android.Manifest;
 
                 //proceedWithNotifications();
             }
+        }
+        private void init(){
+            sharedPreferences = getSharedPreferences("MiPreferencia", MODE_PRIVATE);
+            String savedTitle = sharedPreferences.getString("titulo", null); // null si no hay nada guardado
+
+            if (savedTitle != null) {
+
+                binding.titleG.setText(savedTitle);
+            } else {
+                binding.titleG.setText("HydroTrak");
+            }
+            binding.editTitle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showEditTitleDialog();
+
+                }
+            });
+
+        }
+        private void showEditTitleDialog() {
+
+
+
+
+            dialog = new Dialog(MainActivity.this);
+            dialog.setContentView(R.layout.edit_title);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.setCancelable(true);
+
+            EditText editText = dialog.findViewById(R.id.txt_title);
+            editText.requestFocus();
+            TextView txt_error = dialog.findViewById(R.id.txt_error);
+            Button btn_cancelar = dialog.findViewById(R.id.btn_Cancelar);
+            Button btn_guardar = dialog.findViewById(R.id.btn_guardar);
+            btn_cancelar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            btn_guardar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String title = editText.getText().toString().trim();
+                    if (title.isEmpty()) {
+                        txt_error.setVisibility(View.VISIBLE);
+                        txt_error.setText("No puede estar vacío");
+                        return;
+                    }
+                    else if (title.length() < 3) {
+                        txt_error.setVisibility(View.VISIBLE);
+                        txt_error.setText("Debe tener al menos 3 caracteres");
+                        return;
+                    }
+                    else  if (title.length() > 25) {
+                        txt_error.setVisibility(View.VISIBLE);
+                        txt_error.setText("No puede tener más de 25 caracteres");
+                        return;
+                    }else{
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("titulo" ,String.valueOf(editText.getText()));
+                        editor.apply(); // O editor.commit();
+                        binding.titleG.setText(editText.getText());
+                        dialog.dismiss();
+                    }
+
+                }
+            });
+
+
+            dialog.show();
         }
         @Override
         public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -118,6 +199,14 @@ import android.Manifest;
         protected void onResume() {
             super.onResume();
 
+        }
+        private void showKeyboard(View view) {
+
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+
+                imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+            }
         }
 
     }

@@ -100,6 +100,7 @@ public class homeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        percentage = percentageT;
         initAnimate();
         new Handler().postDelayed(this::animateLine, 1500);
     }

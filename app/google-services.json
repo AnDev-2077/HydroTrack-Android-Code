@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "702629904194",
+    "project_id": "tank-1568c",
+    "storage_bucket": "tank-1568c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702629904194:android:36a5324985391bd587d2db",
+        "android_client_info": {
+          "package_name": "com.example.tank"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "702629904194-k1ebagrbtf9d1164qo9ttoi2qculonnt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbLWtfazsb1OgUoeYszJ1l7fh2cfdWL_M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "702629904194-k1ebagrbtf9d1164qo9ttoi2qculonnt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

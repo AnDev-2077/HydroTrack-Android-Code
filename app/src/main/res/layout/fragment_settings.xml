@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.SettingsFragment"
     android:background="@color/app_background">
 
@@ -10,44 +11,65 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="5dp"
        >
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_margin="15dp">
+            android:layout_margin="15dp"
+            >
             <ImageView
                 android:id="@+id/img_user"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/gato_user"
-                android:background="@drawable/circular_image"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:scaleType="centerCrop"
                 android:clipToOutline="true"
-                android:layout_marginEnd="20dp"
+
+                android:background="@drawable/circular_image"
                 />
             <LinearLayout
+                android:id="@+id/info"
+                app:layout_constraintStart_toEndOf="@+id/img_user"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:paddingStart="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center_vertical">
                 <TextView
+                    android:id="@+id/usuario"
                     android:textColor="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Usuario car921"
+                    tools:text="suario car921"
                     android:textStyle="bold"
                     android:textSize="18dp"/>
                 <TextView
+                    android:id="@+id/correo"
                     android:textColor="@color/primary_color_0_5"
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="user@correo.com"/>
+                    tools:text="user@correo.com"/>
             </LinearLayout>
+            <ImageView
+                android:id="@+id/btn_cs"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/logout"/>
 
-        </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <LinearLayout
+            android:id="@+id/btn_notification"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:orientation="horizontal"
@@ -90,6 +112,7 @@
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/btn_almacenam"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:orientation="horizontal"
@@ -132,6 +155,7 @@
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/btn_grups"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:orientation="horizontal"
@@ -173,6 +197,7 @@
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/btn_perso"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:orientation="horizontal"

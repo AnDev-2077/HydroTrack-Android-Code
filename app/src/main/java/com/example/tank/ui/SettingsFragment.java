@@ -1,5 +1,7 @@
 package com.example.tank.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,11 +11,20 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tank.R;
 import com.example.tank.databinding.FragmentHomeBinding;
 import com.example.tank.databinding.FragmentSettingsBinding;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +42,11 @@ public class SettingsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     FragmentSettingsBinding binding;
+    private FirebaseAuth mAuth;
+    //Variables opcionales para desloguear de google tambien
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInOptions gso;
+
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -72,9 +88,79 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        //Configurar las gso para google signIn con el fin de luego desloguear de google
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this.requireContext(), gso);
+        initDatos();
+        eventButtons();
+    }
+    public void initDatos(){
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        binding.correo.setText(currentUser.getEmail());
+        binding.usuario.setText(currentUser.getDisplayName());
         Glide.with(this)
-                .load(R.drawable.gato_user)
+                .load(currentUser.getPhotoUrl())
                 .circleCrop()
                 .into(binding.imgUser);
+
+        binding.btnCs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signOut();
+            }
+        });
+
+    }
+    private void signOut(){
+        mAuth.signOut();
+        Context context = this.requireContext();
+        mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Intent mainActivity = new Intent(context, LoginActivity.class);
+                    startActivity(mainActivity);
+                    requireActivity().finish();
+                }else{
+                    Toast.makeText(context, "No se pudo cerrar sesión con google",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+    private void eventButtons(){
+        binding.btnNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), NotificacionesActivity.class);
+                startActivity(intent);
+            }
+        });
+        binding.btnPerso.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PersonalizacionActivity.class);
+                startActivity(intent);
+            }
+        });
+        binding.btnAlmacenam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AlamcenamientoActivity.class);
+                startActivity(intent);
+            }
+        });
+        binding.btnGrups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), GruposActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }
