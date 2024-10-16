@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:background="@color/white"
+        >
+
+        <TextView
+            android:id="@+id/titile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MENSAJE"
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:layout_marginBottom="15dp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No se encontró el usuario"
+            android:textSize="18sp"
+            android:layout_marginBottom="15dp"
+            android:textColor="@color/black"
+            android:gravity="center"/>
+        <Button
+            android:id="@+id/btn_ce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cerrar"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/header_background"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

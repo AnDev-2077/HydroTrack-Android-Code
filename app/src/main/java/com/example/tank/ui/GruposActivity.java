@@ -1,8 +1,10 @@
 package com.example.tank.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,11 +27,28 @@ public class GruposActivity extends AppCompatActivity {
             return insets;
         });
         ImageView btnBack = findViewById(R.id.back);
+        LinearLayout createGroups = findViewById(R.id.create_group);
+        LinearLayout verGroups = findViewById(R.id.ver_grupos);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();;
             }
         });
+        createGroups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GruposActivity.this, NewGroupActivity.class);
+                startActivity(intent);
+            }
+        });
+        verGroups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GruposActivity.this, ShowGruopsActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }

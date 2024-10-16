@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Tank"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.ShowGroupssActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ShowGruopsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.NewGroupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.NuevoGrupo_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.NuevoGrupoActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.PersonalizacionActivity"
             android:exported="false" />

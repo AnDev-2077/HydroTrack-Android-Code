@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -22,20 +22,54 @@
         android:paddingEnd="20dp"
         >
         <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/title_g"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-                android:text="HydroTrakddddddddddddd"
+            android:text="HydroTrak"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:textSize="20dp"
-            android:layout_marginEnd="5dp"/>
+            android:textSize="19dp"
+            android:layout_marginEnd="5dp"
+            />
         <ImageView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/title_g"
             android:id="@+id/edit_title"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/pencil"/>
-    </LinearLayout>
+        <LinearLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/clave_key"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tanque"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:ellipsize="end"
+
+                />
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/arrow_down"
+                />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <FrameLayout

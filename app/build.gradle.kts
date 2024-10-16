@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.tank"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -45,6 +45,10 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:20.2.0")
     //picasso
     implementation ("com.squareup.picasso:picasso:2.8")
+    implementation ("com.google.android.material:material:1.4.0")
+    //
+    implementation ("com.google.firebase:firebase-database:20.3.0")
+
 
     implementation(libs.appcompat)
     implementation(libs.material)

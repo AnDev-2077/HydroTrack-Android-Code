@@ -13,6 +13,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,6 +26,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -41,6 +45,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.tank.adapters.MainAdapter;
 import com.example.tank.databinding.ActivityMainBinding;
+import com.example.tank.domain.DataModule;
+import com.example.tank.domain.Group;
+import com.example.tank.domain.Member;
 import com.example.tank.tank.WaveBar;
 import com.example.tank.tank.WaveView;
 import com.example.tank.ui.HistoryFragment;
@@ -49,18 +56,43 @@ import com.example.tank.ui.homeFragment;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import android.Manifest;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
-
-    public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
         ActivityMainBinding binding;
         private static final int PERMISSION_REQUEST_CODE = 123;
         Dialog dialog;
         SharedPreferences sharedPreferences;
+        Member member = null;
+        List<Group> groupsUser = new ArrayList<>();
+        public static String keyModuleCurrent = null;
+         private FirebaseAuth mAuth;
+         public DataModule currentDataModule = null;
+
+        private DatabaseReference databaseReferenceG;
+        private Handler handler = new Handler(Looper.getMainLooper());
+        private Runnable consultaRunnable;
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
+
             super.onCreate(savedInstanceState);
             EdgeToEdge.enable(this);
             setContentView(R.layout.activity_main);
@@ -73,6 +105,7 @@ import android.Manifest;
             setContentView(binding.getRoot());
 
             init();
+
             initTabLayaut();
 
 
@@ -88,6 +121,8 @@ import android.Manifest;
             }
         }
         private void init(){
+            getUser();
+
             sharedPreferences = getSharedPreferences("MiPreferencia", MODE_PRIVATE);
             String savedTitle = sharedPreferences.getString("titulo", null); // null si no hay nada guardado
 
@@ -97,6 +132,8 @@ import android.Manifest;
             } else {
                 binding.titleG.setText("HydroTrak");
             }
+
+            binding.editTitle.setVisibility(View.GONE);
             binding.editTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -104,12 +141,16 @@ import android.Manifest;
 
                 }
             });
-
+            binding.claveKey.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showCustomPopupMenu(v);
+                }
+            });
         }
+
+
         private void showEditTitleDialog() {
-
-
-
 
             dialog = new Dialog(MainActivity.this);
             dialog.setContentView(R.layout.edit_title);
@@ -171,6 +212,61 @@ import android.Manifest;
                 }
             }
         }
+        void getUser(){
+            mAuth = FirebaseAuth.getInstance();
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+
+            DatabaseReference membersRef = FirebaseDatabase.getInstance().getReference("users");
+            membersRef.orderByChild("email").equalTo(currentUser.getEmail()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot memberSnapshot : dataSnapshot.getChildren()) {
+                            member = memberSnapshot.getValue(Member.class);
+                            if(member.getIdModule()!=null){
+                                Log.i("miloggggg76",String.valueOf("Tecnicamente si"));
+                                keyModuleCurrent = member.getIdModule();
+
+                            }
+
+                            if(member.getGroups()!=null){
+                                addGroup(member.getGroups());
+                            }
+                        }
+                    } else {
+                        member = null;
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    member = null;
+                }
+            });
+        }
+        private void addGroup(List<String> groups){
+            DatabaseReference groupsRef = FirebaseDatabase.getInstance().getReference("groups");
+
+            for(String group : groups){
+                groupsRef.child(group).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Group grupo = dataSnapshot.getValue(Group.class);
+                            if (grupo != null) {
+                                groupsUser.add(grupo);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        groupsUser = null;
+                    }
+                });
+            }
+
+        }
         private void initTabLayaut(){
 
             replaceFragment(new homeFragment());
@@ -198,15 +294,86 @@ import android.Manifest;
         @Override
         protected void onResume() {
             super.onResume();
-
+            handler.post(consultaRunnable);
         }
-        private void showKeyboard(View view) {
 
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
+        private void showCustomPopupMenu(View anchor) {
 
-                imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+            PopupWindow popupWindow = new PopupWindow(this);
+
+            LinearLayout popupLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_options_main, null);
+
+            // Agregar elementos al PopupWindow
+            popupWindow.setContentView(popupLayout);
+            popupWindow.setWidth(LinearLayout.LayoutParams.WRAP_CONTENT);
+            popupWindow.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+            popupWindow.setFocusable(true);
+
+            for(Group g : groupsUser){
+                for(String key : g.getKeyModuls()){
+                    addMenuItem(popupLayout,g.getName(),key, popupWindow);
+                }
+
             }
+
+
+
+            popupWindow.showAsDropDown(anchor);
         }
 
+        private void addMenuItem(LinearLayout layout, String name, String clave , PopupWindow popupWindow) {
+            View menuItem = LayoutInflater.from(this).inflate(R.layout.option_main, layout, false);
+            TextView nameT = menuItem.findViewById(R.id.name_o);
+            TextView claveT= menuItem.findViewById(R.id.clave_o);
+
+            if (name.length() > 15) {
+                name = name.substring(0, 15) + "...";
+            }
+            nameT.setText(name);
+
+            claveT.setText(ocultarString(clave));
+
+
+            menuItem.setOnClickListener(v -> {
+                //Click en uno de ellos
+                keyModuleCurrent = clave;
+                popupWindow.dismiss();
+            });
+
+            layout.addView(menuItem);
+        }
+    String ocultarString(String clave){
+        if (clave.length() > 5) {
+            String visiblePart = clave.substring(0, 5);
+            String maskedPart = new String(new char[clave.length() - 5]).replace("\0", "*");
+            return visiblePart + maskedPart;
+        }
+        else{
+            return "key";
+        }
     }
+
+
+    void changeTank(String key){
+            if(member==null) return;;
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        String userEmail = member.getEmail();
+
+        String nuevoIdGroup = "nuevo_valor_de_idGroup";
+
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("idGroup", nuevoIdGroup);
+
+
+        database.child("users").child(userEmail).updateChildren(updates)
+                .addOnSuccessListener(aVoid -> {
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("RealtimeDB", "Error al actualizar el campo 'idGroup' para el usuario con email: " + userEmail, e);
+                });
+    }
+
+}
+

@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,14 +13,28 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
+import com.example.tank.MainActivity;
 import com.example.tank.R;
 import com.example.tank.databinding.FragmentHomeBinding;
+import com.example.tank.domain.DataModule;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -31,6 +47,9 @@ import java.util.Locale;
 public class homeFragment extends Fragment {
 
 
+    private static final String SERVER_IP = "192.168.4.1";
+    private static final int SERVER_PORT = 80;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -40,16 +59,16 @@ public class homeFragment extends Fragment {
 
     /**/
 
-    int percentageT = 50;
-    int percentageY= 20;
-    int percentageBY = 100;
+     int percentageT = 0;
+    int percentageY= 0;
+    int percentageBY = 0;
 
-    int mlT = 1600;
-    int mlY= 1200;
-    int mlBY = 2400;
-    int ml =mlT;
+    int mlT = 0;
+    int mlY= 0;
+    int mlBY = 0;
+    int ml = 0;
 
-   public static int percentage = 50;
+    public int percentage = 0;
 
     FragmentHomeBinding binding;
     int day = 2;
@@ -57,6 +76,12 @@ public class homeFragment extends Fragment {
     private ValueAnimator progressAnimator;
     private ObjectAnimator alphaAnimator;
     private ObjectAnimator alphaAnimator2;
+
+    public DataModule currentDataModule = null;
+
+    private DatabaseReference databaseReferenceG;
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable consultaRunnable;
 
     public homeFragment() {
 
@@ -91,19 +116,29 @@ public class homeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //
-       // binding.waveBar.setPorsentage(percentage);
+
         binding.waterPorsentage.setText(String.valueOf(percentage)+"%");
+        initThread();
         changeDay();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        percentage = percentageT;
+        //binding.waveView.setProgress(50);
         initAnimate();
         new Handler().postDelayed(this::animateLine, 1500);
+
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        handler.removeCallbacks(consultaRunnable);
+    }
+
+
     private void animate(int targetProgress) {
 
         progressAnimator = ValueAnimator.ofInt(0, targetProgress);
@@ -243,7 +278,57 @@ public class homeFragment extends Fragment {
     private void initAnimate(){
         restartAnimation();
         changeDay();
+        //binding.waveView.setVisibility(View.VISIBLE);
         animate(percentage);
+
+    }
+    private void initThread(){
+
+        consultaRunnable = new Runnable() {
+            @Override
+            public void run() {
+                consultarUltimoObjeto();
+                handler.postDelayed(this, 2000); // Se ejecuta cada 2 segundos
+            }
+        };
+
+
+        handler.post(consultaRunnable);
+
+    }
+
+    private void consultarUltimoObjeto() {
+        databaseReferenceG = FirebaseDatabase.getInstance().getReference("ModulesWifi/"+ MainActivity.keyModuleCurrent);
+        if(MainActivity.keyModuleCurrent==null){
+            Log.i("miloggggg76","Es nulooos");
+            return;
+        }
+        Query lastQuery = databaseReferenceG.orderByKey().limitToLast(1);
+
+        lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                        DataModule dataModule = snapshot.getValue(DataModule.class);
+                        if (dataModule != null) {
+                            currentDataModule = dataModule;
+                            percentage = Integer.parseInt(currentDataModule.getPorcentaje());
+                            initAnimate();
+                            Log.i("miloggggg76r",String.valueOf(currentDataModule.getPorcentaje()));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Manejar el error
+                System.err.println("Error al consultar Firebase: " + databaseError.getMessage());
+            }
+        });
+
 
     }
     private void restartAnimation() {
@@ -292,4 +377,6 @@ public class homeFragment extends Fragment {
             binding.tankLine.setAlpha(0f);
         }, 2000);*/
     }
+
+
 }

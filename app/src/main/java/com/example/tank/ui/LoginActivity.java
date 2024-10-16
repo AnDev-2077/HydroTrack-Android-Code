@@ -17,6 +17,8 @@ import com.example.tank.MainActivity;
 import com.example.tank.R;
 import com.example.tank.databinding.ActivityLoginBinding;
 import com.example.tank.databinding.ActivityMainBinding;
+import com.example.tank.domain.DataModule;
+import com.example.tank.domain.Member;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -29,6 +31,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -100,18 +104,46 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                //  añadirModulo();
+                                // Obtener información del usuario
+                                String userId = user.getUid();
+                                String email = user.getEmail();
+                                String name = user.getDisplayName();
+                                String photoUrl = user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "";
 
-                            Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(mainActivity);
-                            LoginActivity.this.finish();
+                                // Guardar los datos del usuario en Realtime Database
+                                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+                                Member userData = new Member(email, photoUrl,name,null,null);
+
+                                database.child("users").child(userId).setValue(userData)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Log.d("RealtimeDB", "Usuario guardado en Realtime Database");
+
+                                            // Continuar a la MainActivity
+                                            Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                                            startActivity(mainActivity);
+                                            LoginActivity.this.finish();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.w("RealtimeDB", "Error al guardar el usuario", e);
+                                            // Aquí puedes manejar el error si el guardado falla
+                                        });
+
+
+                                //Añadari un modulo
+
+
+
+                            }
                         } else {
-                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-
                         }
                     }
                 });
     }
+
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);

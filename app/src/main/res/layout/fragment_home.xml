@@ -80,8 +80,9 @@
                                 android:id="@+id/arrow_right"
                                 android:layout_width="15dp"
                                 android:layout_height="match_parent"
-                                android:src="@drawable/arrow_right"
-                                android:alpha="0.15"/>
+                                android:src="@drawable/arrow_right_"
+                                android:alpha="0.15"
+                           />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -110,7 +111,7 @@
                     app:wave_height="large"
                     app:wave_length="large"
                     app:wave_hz="normal"
-                    app:progress="30"/>
+                    app:progress="0"/>
                 <ImageView
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -154,28 +155,28 @@
                     android:textStyle="bold"
                     android:textColor="@color/tank_border_color"/>
                 <TextView
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_nivel"
-                    app:layout_constraintEnd_toStartOf="@+id/water_vol"
+                    app:layout_constraintStart_toStartOf="@+id/txt_nivel"
+                    app:layout_constraintEnd_toEndOf="@id/txt_nivel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="50%"
+                    android:text="0%"
                     android:textSize="27sp"
-
+                    android:layout_marginTop="10dp"
                     android:textStyle="bold"
                     android:textColor="@color/primary_color"
                     android:id="@+id/water_porsentage"
                     />
                 <TextView
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_vol"
-                    app:layout_constraintStart_toEndOf="@+id/water_porsentage"
 
+                    app:layout_constraintTop_toBottomOf="@+id/txt_vol"
+                    app:layout_constraintStart_toStartOf="@+id/txt_vol"
+                    app:layout_constraintEnd_toEndOf="@id/txt_vol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1600L"
+                    android:text="0L"
                     android:textSize="27sp"
-
+                    android:layout_marginTop="10dp"
                     android:textStyle="bold"
                     android:textColor="@color/primary_color"
                     android:id="@+id/water_vol"
@@ -183,6 +184,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
+
     </ScrollView>
 
 </FrameLayout>

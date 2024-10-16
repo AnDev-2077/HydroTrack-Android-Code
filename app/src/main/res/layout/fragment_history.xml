@@ -74,8 +74,9 @@
                                 android:id="@+id/arrow_right"
                                 android:layout_width="15dp"
                                 android:layout_height="match_parent"
-                                android:src="@drawable/arrow_right"
-                                android:alpha="0.15"/>
+                                android:src="@drawable/arrow_right_"
+                                android:alpha="0.15"
+                                />
                         </LinearLayout>
 
                     </LinearLayout>

@@ -8,4 +8,7 @@
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">#DCF3FF</item>
     </style>
+
+
+
 </resources>
