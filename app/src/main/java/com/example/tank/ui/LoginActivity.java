@@ -1,6 +1,7 @@
 package com.example.tank.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.tank.Handler.LoginHandler;
 import com.example.tank.MainActivity;
 import com.example.tank.R;
 import com.example.tank.databinding.ActivityLoginBinding;
@@ -31,17 +33,22 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
+    public  FirebaseAuth mAuth;
+    public GoogleSignInClient mGoogleSignInClient;
     int RC_SIGN_IN = 1;
     String TAG = "GoogleSignInLoginActivity";
 
-    ActivityLoginBinding binding;
+    public ActivityLoginBinding binding;
+    private LoginHandler loginHandler;
+    private DatabaseReference database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,28 +71,28 @@ public class LoginActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance().getReference();
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn();
             }
         });
+        loginHandler = new LoginHandler(mAuth, mGoogleSignInClient, database);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //Resultado devuelto al iniciar el Intent de GoogleSignInApi.getSignInIntent (...);
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             if(task.isSuccessful()){
                 try {
-                    // Google Sign In was successful, authenticate with Firebase
+
                     GoogleSignInAccount account = task.getResult(ApiException.class);
                     Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                     firebaseAuthWithGoogle(account.getIdToken());
                 } catch (ApiException e) {
-                    // Google Sign In fallido, actualizar GUI
+
                     Log.w(TAG, "Google sign in failed", e);
                 }
             }else{
@@ -103,39 +110,47 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
                             if (user != null) {
-                                //  añadirModulo();
-                                // Obtener información del usuario
                                 String userId = user.getUid();
-                                String email = user.getEmail();
-                                String name = user.getDisplayName();
-                                String photoUrl = user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "";
-
-                                // Guardar los datos del usuario en Realtime Database
                                 DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-                                Member userData = new Member(email, photoUrl,name,null,null);
 
-                                database.child("users").child(userId).setValue(userData)
-                                        .addOnSuccessListener(aVoid -> {
-                                            Log.d("RealtimeDB", "Usuario guardado en Realtime Database");
 
-                                            // Continuar a la MainActivity
+                                database.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (!dataSnapshot.exists()) {
+
+                                            String email = user.getEmail();
+                                            String name = user.getDisplayName();
+                                            String photoUrl = user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "";
+
+                                            Member userData = new Member(email, photoUrl, name, null, null);
+                                            database.child("users").child(userId).setValue(userData)
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        Log.d("RealtimeDB", "Usuario guardado en Realtime Database");
+
+
+                                                        Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                                                        startActivity(mainActivity);
+                                                        LoginActivity.this.finish();
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Log.w("RealtimeDB", "Error al guardar el usuario", e);
+                                                    });
+                                        } else {
+
                                             Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
                                             startActivity(mainActivity);
                                             LoginActivity.this.finish();
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Log.w("RealtimeDB", "Error al guardar el usuario", e);
-                                            // Aquí puedes manejar el error si el guardado falla
-                                        });
+                                        }
+                                    }
 
-
-                                //Añadari un modulo
-
-
-
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Log.w("RealtimeDB", "Error al verificar si el usuario existe", databaseError.toException());
+                                    }
+                                });
                             }
                         } else {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -144,19 +159,35 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
     @Override
     protected void onStart() {
+        super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
-        if(user!=null){
 
+        SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+
+        if (isFirstRun) {
+
+            if (user != null) {
+                mAuth.signOut();
+            }
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("isFirstRun", false);
+            editor.apply();
+        }
+
+
+        if (user != null) {
             Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(mainActivity);
-
         }
-        super.onStart();
+
     }
 }

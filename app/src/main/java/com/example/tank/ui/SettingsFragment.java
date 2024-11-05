@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.tank.MainActivity;
 import com.example.tank.R;
-import com.example.tank.databinding.FragmentHomeBinding;
 import com.example.tank.databinding.FragmentSettingsBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -122,9 +121,15 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
+                    MainActivity.keyModuleCurrent = null;
+                    HomeFragment.percentageBY = 0;
+                    HomeFragment.percentageY = 0;
+                    HomeFragment.percentageT = 0;
+                    HomeFragment.percentage = 0;
                     Intent mainActivity = new Intent(context, LoginActivity.class);
+                    mainActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(mainActivity);
-                    requireActivity().finish();
+                    requireActivity().finishAffinity();
                 }else{
                     Toast.makeText(context, "No se pudo cerrar sesión con google",
                             Toast.LENGTH_LONG).show();
@@ -136,28 +141,28 @@ public class SettingsFragment extends Fragment {
         binding.btnNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), NotificacionesActivity.class);
+                Intent intent = new Intent(getContext(), NotificationsActivity.class);
                 startActivity(intent);
             }
         });
         binding.btnPerso.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), PersonalizacionActivity.class);
+                Intent intent = new Intent(getContext(), PersonalizationActivity.class);
                 startActivity(intent);
             }
         });
         binding.btnAlmacenam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), AlamcenamientoActivity.class);
+                Intent intent = new Intent(getContext(), StorageActivity.class);
                 startActivity(intent);
             }
         });
         binding.btnGrups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), GruposActivity.class);
+                Intent intent = new Intent(getContext(), GroupsActivity.class);
                 startActivity(intent);
             }
         });

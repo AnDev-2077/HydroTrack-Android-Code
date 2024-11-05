@@ -1,39 +1,25 @@
 package com.example.tank;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Dialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
+
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.DecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -43,35 +29,27 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.tank.adapters.MainAdapter;
 import com.example.tank.databinding.ActivityMainBinding;
 import com.example.tank.domain.DataModule;
 import com.example.tank.domain.Group;
 import com.example.tank.domain.Member;
-import com.example.tank.tank.WaveBar;
-import com.example.tank.tank.WaveView;
+
 import com.example.tank.ui.HistoryFragment;
 import com.example.tank.ui.SettingsFragment;
-import com.example.tank.ui.homeFragment;
-import com.google.android.material.navigation.NavigationBarView;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.example.tank.ui.HomeFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import android.Manifest;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -80,15 +58,17 @@ public class MainActivity extends AppCompatActivity {
         private static final int PERMISSION_REQUEST_CODE = 123;
         Dialog dialog;
         SharedPreferences sharedPreferences;
-        Member member = null;
+       public Member member = null;
         List<Group> groupsUser = new ArrayList<>();
         public static String keyModuleCurrent = null;
-         private FirebaseAuth mAuth;
+         public FirebaseAuth mAuth;
          public DataModule currentDataModule = null;
 
-        private DatabaseReference databaseReferenceG;
+        public DatabaseReference databaseReferenceG;
         private Handler handler = new Handler(Looper.getMainLooper());
         private Runnable consultaRunnable;
+        public String currentIdGroup = null;
+
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -111,46 +91,32 @@ public class MainActivity extends AppCompatActivity {
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
-                // Permiso no concedido, solicitar
+
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.POST_NOTIFICATIONS},
                         PERMISSION_REQUEST_CODE);
             } else {
 
-                //proceedWithNotifications();
+
             }
         }
         private void init(){
+
             getUser();
-
-            sharedPreferences = getSharedPreferences("MiPreferencia", MODE_PRIVATE);
-            String savedTitle = sharedPreferences.getString("titulo", null); // null si no hay nada guardado
-
-            if (savedTitle != null) {
-
-                binding.titleG.setText(savedTitle);
-            } else {
-                binding.titleG.setText("HydroTrak");
-            }
-
             binding.editTitle.setVisibility(View.GONE);
-            binding.editTitle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showEditTitleDialog();
+            binding.editTitle.setEnabled(false);
 
-                }
-            });
             binding.claveKey.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     showCustomPopupMenu(v);
                 }
             });
         }
 
 
-        private void showEditTitleDialog() {
+        public void showEditTitleDialog() {
 
             dialog = new Dialog(MainActivity.this);
             dialog.setContentView(R.layout.edit_title);
@@ -187,9 +153,24 @@ public class MainActivity extends AppCompatActivity {
                         txt_error.setText("No puede tener más de 25 caracteres");
                         return;
                     }else{
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("titulo" ,String.valueOf(editText.getText()));
-                        editor.apply(); // O editor.commit();
+
+                        //logica guardar titulo
+
+                        String groupId = currentIdGroup;
+
+                        String newName = editText.getText().toString();
+
+
+                        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups").child(groupId);
+
+
+                        groupRef.child("name").setValue(newName).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+
+                            } else {
+
+                            }
+                        });
                         binding.titleG.setText(editText.getText());
                         dialog.dismiss();
                     }
@@ -213,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         void getUser(){
+
             mAuth = FirebaseAuth.getInstance();
             FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -224,13 +206,14 @@ public class MainActivity extends AppCompatActivity {
                         for (DataSnapshot memberSnapshot : dataSnapshot.getChildren()) {
                             member = memberSnapshot.getValue(Member.class);
                             if(member.getIdModule()!=null){
-                                Log.i("miloggggg76",String.valueOf("Tecnicamente si"));
                                 keyModuleCurrent = member.getIdModule();
-
+                                HomeFragment.befpercentage = -1;
+                                HomeFragment.obtenerDatos();
                             }
 
                             if(member.getGroups()!=null){
                                 addGroup(member.getGroups());
+                                addTitle();
                             }
                         }
                     } else {
@@ -244,10 +227,37 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-        private void addGroup(List<String> groups){
+        private void addTitle(){
             DatabaseReference groupsRef = FirebaseDatabase.getInstance().getReference("groups");
 
-            for(String group : groups){
+            groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Group grupo = snapshot.getValue(Group.class);
+                        Log.i("milo78451", keyModuleCurrent);
+                        binding.titleG.setText(grupo.getName());
+                        HomeFragment.bloquear = false;
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e("Database/Error", "Error al leer el grupo: " + databaseError.getMessage());
+                    HomeFragment.bloquear = false;
+                }
+            });
+
+
+        }
+
+        private void addGroup(List<String> groups){
+            DatabaseReference groupsRef = FirebaseDatabase.getInstance().getReference("groups");
+            groupsUser.clear();
+            int totalGroups = groups.size();
+            AtomicInteger groupsProcessed = new AtomicInteger(0);
+
+            for (String group : groups) {
                 groupsRef.child(group).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -255,6 +265,35 @@ public class MainActivity extends AppCompatActivity {
                             Group grupo = dataSnapshot.getValue(Group.class);
                             if (grupo != null) {
                                 groupsUser.add(grupo);
+                                //Solo del primero
+                                HomeFragment.mililitros =Integer.parseInt(grupo.getMl());
+
+                            }
+                        }
+
+
+                        if (groupsProcessed.incrementAndGet() == totalGroups) {
+                            //si
+                            for(Group grup : groupsUser){
+                                for(String mod : grup.getKeyModuls()){
+                                    if(mod.equals(keyModuleCurrent)){
+                                        mAuth = FirebaseAuth.getInstance();
+                                        FirebaseUser currentUser = mAuth.getCurrentUser();
+                                        if(grup.getAdmin().equals(currentUser.getEmail())){
+                                            binding.editTitle.setVisibility(View.VISIBLE);
+                                            binding.editTitle.setEnabled(true);
+                                            currentIdGroup = grup.getId();
+                                            binding.editTitle.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    showEditTitleDialog();
+                                                }
+                                            });
+                                            return;
+                                        }
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -262,17 +301,23 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         groupsUser = null;
+                        if (groupsProcessed.incrementAndGet() == totalGroups) {
+
+
+                        }
                     }
                 });
             }
 
+
+
         }
         private void initTabLayaut(){
 
-            replaceFragment(new homeFragment());
+            replaceFragment(new HomeFragment());
             binding.btnNavegation.setOnItemSelectedListener(item -> {
                 if(item.getItemId()==R.id.home){
-                    replaceFragment(new homeFragment());
+                    replaceFragment(new HomeFragment());
                 }
                 if(item.getItemId()==R.id.history){
                     replaceFragment(new HistoryFragment());
@@ -295,6 +340,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onResume() {
             super.onResume();
             handler.post(consultaRunnable);
+
         }
 
         private void showCustomPopupMenu(View anchor) {
@@ -303,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
             LinearLayout popupLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_options_main, null);
 
-            // Agregar elementos al PopupWindow
+
             popupWindow.setContentView(popupLayout);
             popupWindow.setWidth(LinearLayout.LayoutParams.WRAP_CONTENT);
             popupWindow.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -336,8 +382,8 @@ public class MainActivity extends AppCompatActivity {
 
             menuItem.setOnClickListener(v -> {
                 //Click en uno de ellos
-                keyModuleCurrent = clave;
-                popupWindow.dismiss();
+                changeModule(clave);
+
             });
 
             layout.addView(menuItem);
@@ -352,28 +398,53 @@ public class MainActivity extends AppCompatActivity {
             return "key";
         }
     }
+    void changeModule(String clave){
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        String emailToFind = currentUser.getEmail();
+
+        String newIdModule = clave;
 
 
-    void changeTank(String key){
-            if(member==null) return;;
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        String userEmail = member.getEmail();
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
 
-        String nuevoIdGroup = "nuevo_valor_de_idGroup";
+        usersRef.orderByChild("email").equalTo(emailToFind).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        String userId = userSnapshot.getKey();
+
+                        DatabaseReference userIdModuleRef = usersRef.child(userId).child("idModule");
 
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("idGroup", nuevoIdGroup);
+                        userIdModuleRef.setValue(newIdModule).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
 
+                                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Log.e("Firebase", "Error al actualizar el idModule del usuario.", task.getException());
+                            }
+                        });
+                    }
 
-        database.child("users").child(userEmail).updateChildren(updates)
-                .addOnSuccessListener(aVoid -> {
+                } else {
+                    Log.d("Firebase", "Usuario no encontrado con el correo proporcionado.");
+                }
+            }
 
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("RealtimeDB", "Error al actualizar el campo 'idGroup' para el usuario con email: " + userEmail, e);
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Firebase", "Error en la búsqueda del usuario.", databaseError.toException());
+            }
+        });
+
     }
+
 
 }
 

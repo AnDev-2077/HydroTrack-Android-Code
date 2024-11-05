@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -17,10 +18,22 @@
         android:theme="@style/Theme.Tank"
         tools:targetApi="31">
         <activity
+            android:name=".ui.SeePdfActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ListPdfActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.SeePDFActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.GroupInformationActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.ShowGroupssActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.ShowGruopsActivity"
+            android:name=".ui.SeeGroupsActivity"
             android:exported="false" />
         <activity
             android:name=".ui.NewGroupActivity"
@@ -32,16 +45,16 @@
             android:name=".ui.NuevoGrupoActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.PersonalizacionActivity"
+            android:name=".ui.PersonalizationActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.GruposActivity"
+            android:name=".ui.GroupsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.AlamcenamientoActivity"
+            android:name=".ui.StorageActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.NotificacionesActivity"
+            android:name=".ui.NotificationsActivity"
             android:exported="false" />
         <activity
             android:name=".ui.LoginActivity"

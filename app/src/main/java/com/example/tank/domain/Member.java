@@ -15,13 +15,19 @@ public class Member {
 
     public Member() {
     }
+    public Member(String module, List<String> groups) {
+        this.idModule = module;
+        this.groups = groups;
+    }
+    public Member(String email) {
+        this.email = email;
+    }
 
     public Member(String email, String img, String name, List<String> groups, String idModule) {
         this.email = email;
         this.img = img;
         this.name = name;
         this.groups = groups;
-
         this.idModule = idModule;
     }
     public Member(String email, String img, String name) {

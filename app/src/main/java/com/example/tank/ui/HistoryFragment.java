@@ -20,16 +20,19 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
+import com.example.tank.Handler.HistoryFragmentHandler;
 import com.example.tank.MainActivity;
 import com.example.tank.R;
 import com.example.tank.databinding.FragmentHistoryBinding;
 import com.example.tank.databinding.FragmentHomeBinding;
 import com.example.tank.databinding.FragmentSettingsBinding;
+import com.example.tank.domain.DataModule;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
@@ -39,11 +42,21 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,7 +65,7 @@ import java.util.Locale;
  */
 public class HistoryFragment extends Fragment {
 
-
+    private HistoryFragmentHandler historyFragmentHandler;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -63,6 +76,12 @@ public class HistoryFragment extends Fragment {
     /**/
     FragmentHistoryBinding binding;
     private static final String CHANNEL_ID = "my_channel_id";
+
+    private float[] currentData = new float[7];
+
+    float[] estaSemana = new float[]{0, 0, 0, 0, 0, 0, 0};
+    float[] semanaPasada = new float[]{0, 0, 0, 0, 0, 0, 0};
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public HistoryFragment() {
 
@@ -80,6 +99,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        historyFragmentHandler = new HistoryFragmentHandler(FirebaseDatabase.getInstance().getReference());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -90,41 +110,46 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        binding  =   FragmentHistoryBinding.inflate(inflater,container,false);
-        return  binding.getRoot();
+        binding = FragmentHistoryBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        createNotificationChannel();
 
-       /* binding.btn1.setOnClickListener(new View.OnClickListener() {
+        initData();
+        obtenerData();
+    }
+    public void obtenerData() {
+        historyFragmentHandler.obtenerDatos(MainActivity.keyModuleCurrent, new HistoryFragmentHandler.DataCallback() {
             @Override
-            public void onClick(View v) {
-                showNotification("Nivel Tanque", "El tanque está completamente lleno.");
+            public void onDataRetrieved(List<DataModule> data) {
+                procesarSemanas(data);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                System.err.println("Error al leer datos: " + e.getMessage());
             }
         });
-        binding.btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showNotification("Nivel Tanque", "Tanque al "+homeFragment.percentage+"% de su capacidad");
-            }
-        });*/
-        initData();
-    }
-    void initData() {
-        float[] newValues = new float[]{20, 30, 50, 70, 90, 80, 60};
-        updateChartData(newValues);
-        changeDay();
     }
 
-    private void updateChartData(float[] values) {
+    void initData() {
+        updateChartData();
+        changeDay();
+        obtenerDatos();
+    }
+
+    private void updateChartData() {
+        if (!isAdded()) {
+            return;
+        }
         LineChart lineChart = binding.lineChar;
 
         ArrayList<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < values.length; i++) {
-            entries.add(new Entry(i, values[i]));
+        for (int i = 0; i < currentData.length; i++) {
+            entries.add(new Entry(i, currentData[i]));
         }
 
         LineDataSet dataSet = new LineDataSet(entries, "");
@@ -176,63 +201,22 @@ public class HistoryFragment extends Fragment {
         lineChart.invalidate(); // Refresh
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Default Channel",
-                    NotificationManager.IMPORTANCE_HIGH // Cambia a IMPORTANCE_HIGH
-            );
-            channel.setDescription("Default notification channel");
 
-            NotificationManager notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
-    }
-    private void showNotification(String title, String message) {
-        int drawableId = R.drawable.tank_w;
-
-        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
-            drawableId = R.drawable.tank_w;
-        } else {
-            drawableId = R.drawable.tank_b;
-        }
-
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.tank_w);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                .setSmallIcon(drawableId)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setAutoCancel(true)
-                .setLargeIcon(largeIcon);
-
-        NotificationManager notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (notificationManager != null) {
-            notificationManager.notify(1, builder.build());
-        }
-    }
-    private void changeDay(){
+    private void changeDay() {
         binding.containerArrowRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if( week<2){
+                if (week < 2) {
                     week++;
 
                     binding.txtDay.setText(updateDay());
 
                     binding.arrowRight.setAlpha(1.0f);
-                    if(week==2){
+                    if (week == 2) {
                         binding.arrowRight.setAlpha(0.15f);
                         binding.arrowLeft.setAlpha(1.0f);
-                    }else{
+                    } else {
                         binding.arrowLeft.setAlpha(1.0f);
                     }
                 }
@@ -241,14 +225,14 @@ public class HistoryFragment extends Fragment {
         binding.containerArrowLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ( week > 1) {
+                if (week > 1) {
                     week--;
                     binding.txtDay.setText(updateDay());
                     binding.arrowLeft.setAlpha(1.0f);
-                    if(week==1) {
+                    if (week == 1) {
                         binding.arrowLeft.setAlpha(0.15f);
                         binding.arrowRight.setAlpha(1.0f);
-                    }else{
+                    } else {
                         binding.arrowRight.setAlpha(1.0f);
                     }
                 }
@@ -256,23 +240,111 @@ public class HistoryFragment extends Fragment {
             }
         });
     }
-    String updateDay(){
 
-        switch (week){
+    String updateDay() {
+
+        switch (week) {
             case 1:
 
-                float[] newValuess = new float[]{10, 10, 30, 80, 30, 60, 40};
-                updateChartData(newValuess);
+                currentData = semanaPasada;
+                updateChartData();
                 return "Semana pasada";
             case 2:
+                currentData = estaSemana;
 
-                float[] newValues = new float[]{20, 30, 50, 70, 90, 80, 60};
-                updateChartData(newValues);
+                updateChartData();
                 return "Esta semana";
             default:
-                float[] newValuesw = new float[]{20, 30, 50, 70, 90, 80, 60};
-                updateChartData(newValuesw);
+                currentData = estaSemana;
+                updateChartData();
                 return "Esta semana";
         }
+    }
+
+    public void obtenerDatos() {
+
+
+        DatabaseReference ref =FirebaseDatabase.getInstance().getReference("ModulesWifi/" + MainActivity.keyModuleCurrent);
+
+        ref.orderByChild("fecha").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, DataModule> latestDataByDate = new HashMap<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    DataModule data = snapshot.getValue(DataModule.class);
+
+                    if (data != null) {
+                        String fecha = data.getFecha();
+
+
+                        latestDataByDate.put(fecha, data);
+                    }
+                }
+
+                List<DataModule> listaFinal = new ArrayList<>(latestDataByDate.values());
+                procesarSemanas(listaFinal);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.err.println("Error al leer datos: " + databaseError.getMessage());
+            }
+        });
+    }
+
+
+    public void procesarSemanas(List<DataModule> listaFinal) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calendario = Calendar.getInstance();
+
+
+        calendario.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        Date lunesActual = calendario.getTime();
+
+        calendario.add(Calendar.DATE, -7);
+        Date lunesPasado = calendario.getTime();
+
+
+        Map<String, Float> porcentajePorFecha = new HashMap<>();
+        for (DataModule data : listaFinal) {
+            porcentajePorFecha.put(data.getFecha(), Float.parseFloat(data.getPorcentaje()));
+        }
+
+
+        llenarSemana(semanaPasada, porcentajePorFecha, lunesPasado, dateFormat);
+
+
+        llenarSemana(estaSemana, porcentajePorFecha, lunesActual, dateFormat);
+
+        currentData = estaSemana;
+        updateChartData();
+        Log.i("Mimundoupn","Semana pasada: " + Arrays.toString(semanaPasada));
+        Log.i("Mimundoupn","Esta semana: " + Arrays.toString(estaSemana));
+    }
+
+    private void llenarSemana(float[] semana, Map<String, Float> porcentajePorFecha, Date lunes, SimpleDateFormat dateFormat) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(lunes);
+
+        for (int i = 0; i < 7; i++) {
+            String fecha = dateFormat.format(cal.getTime());
+            if (porcentajePorFecha.containsKey(fecha)) {
+                semana[i] = porcentajePorFecha.get(fecha);
+            }
+
+            cal.add(Calendar.DATE, 1);
+        }
+
+
+        Date hoy = new Date();
+        if (cal.getTime().after(hoy)) {
+            while (cal.getTime().before(hoy)) {
+                semana[cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY] = 0;
+                cal.add(Calendar.DATE, 1);
+            }
+        }
+
     }
 }

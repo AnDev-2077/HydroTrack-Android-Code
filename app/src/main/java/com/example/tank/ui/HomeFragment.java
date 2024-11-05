@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.content.Context;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,15 +12,11 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.Toast;
 
 import com.example.tank.MainActivity;
-import com.example.tank.R;
 import com.example.tank.databinding.FragmentHomeBinding;
 import com.example.tank.domain.DataModule;
 import com.google.firebase.database.DataSnapshot;
@@ -32,19 +26,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link homeFragment#newInstance} factory method to
+ * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class homeFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
 
     private static final String SERVER_IP = "192.168.4.1";
@@ -59,16 +50,19 @@ public class homeFragment extends Fragment {
 
     /**/
 
-     int percentageT = 0;
-    int percentageY= 0;
-    int percentageBY = 0;
+    public static int percentageT = 0;
+    public static int percentageY= 0;
+    public static int percentageBY = 0;
 
-    int mlT = 0;
-    int mlY= 0;
-    int mlBY = 0;
-    int ml = 0;
+    public static int mililitros = 0;
+    public static int mlT = 0;
+    public static int mlY= 50;
+    public static int mlBY = 60;
+    public static int ml = 0;
 
-    public int percentage = 0;
+    public static int befpercentage = -1;
+    public static int percentage = 0;
+    public static boolean bloquear = true;
 
     FragmentHomeBinding binding;
     int day = 2;
@@ -83,12 +77,12 @@ public class homeFragment extends Fragment {
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable consultaRunnable;
 
-    public homeFragment() {
+    public HomeFragment() {
 
     }
 
-    public static homeFragment newInstance(String param1, String param2) {
-        homeFragment fragment = new homeFragment();
+    public static HomeFragment newInstance(String param1, String param2) {
+        HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -118,17 +112,21 @@ public class homeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.waterPorsentage.setText(String.valueOf(percentage)+"%");
+        binding.arrowRight.setEnabled(false);
+        binding.arrowLeft.setEnabled(false);
+        binding.progressBar.setVisibility(View.VISIBLE);
         initThread();
-        changeDay();
+
+
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //binding.waveView.setProgress(50);
+
         initAnimate();
-        new Handler().postDelayed(this::animateLine, 1500);
+        befpercentage = -1;
 
     }
 
@@ -200,15 +198,20 @@ public class homeFragment extends Fragment {
 
                     binding.txtDay.setText(updateDay());
                     updateMl();;
-                    binding.waterVol.setText(String.valueOf(ml)+"L");
+
                     binding.arrowRight.setAlpha(1.0f);
                     if(day==2){
                         binding.arrowRight.setAlpha(0.15f);
                         binding.arrowLeft.setAlpha(1.0f);
+                        initThread();
                     }else{
                         binding.arrowLeft.setAlpha(1.0f);
+                        stopThread();
                     }
                 }
+
+
+
             }
         });
         binding.containerArrowLeft.setOnClickListener(new View.OnClickListener() {
@@ -219,15 +222,19 @@ public class homeFragment extends Fragment {
 
                     binding.txtDay.setText(updateDay());
                     updateMl();;
-                    binding.waterVol.setText(String.valueOf(ml)+"L");
+
                     binding.arrowLeft.setAlpha(1.0f);
                     if(day==0) {
                         binding.arrowLeft.setAlpha(0.15f);
                         binding.arrowRight.setAlpha(1.0f);
+
                     }else{
                         binding.arrowRight.setAlpha(1.0f);
+                        stopThread();
                     }
                 }
+
+
 
             }
         });
@@ -243,25 +250,33 @@ public class homeFragment extends Fragment {
         switch (day){
             case 0:
                 percentage = percentageBY;
+                double mililitrosActuales = calcularLitros(mililitros, percentage);
+                binding.waterVol.setText(mililitrosActuales+"L");
                 initAnimate();
                 return dayEs;
             case 1:
                 percentage = percentageY;
+                double mililitrosActuales2 = calcularLitros(mililitros, percentage);
+                binding.waterVol.setText(mililitrosActuales2+"L");
                 initAnimate();
                 return "Ayer";
             case 2:
                 percentage = percentageT;
+                double mililitrosActuales3 = calcularLitros(mililitros, percentage);
+                binding.waterVol.setText(mililitrosActuales3+"L");
                 initAnimate();
                 return "Hoy";
             default:
                 percentage = percentageT;
+                double mililitrosActuales4 = calcularLitros(mililitros, percentage);
+                binding.waterVol.setText(mililitrosActuales4+"L");
                 initAnimate();
                 return "Hoy";
         }
     }
     private void updateMl(){
 
-        int mlW = ml;
+      /*  int mlW = ml;
         if(day == 0){
             mlW = mlBY;
         }
@@ -273,11 +288,11 @@ public class homeFragment extends Fragment {
         }
 
 
-        ml = mlW;
+        ml = mlW;*/
     }
     private void initAnimate(){
         restartAnimation();
-        changeDay();
+       // changeDay();
         //binding.waveView.setVisibility(View.VISIBLE);
         animate(percentage);
 
@@ -288,7 +303,7 @@ public class homeFragment extends Fragment {
             @Override
             public void run() {
                 consultarUltimoObjeto();
-                handler.postDelayed(this, 2000); // Se ejecuta cada 2 segundos
+                handler.postDelayed(this, 2000);
             }
         };
 
@@ -298,11 +313,12 @@ public class homeFragment extends Fragment {
     }
 
     private void consultarUltimoObjeto() {
-        databaseReferenceG = FirebaseDatabase.getInstance().getReference("ModulesWifi/"+ MainActivity.keyModuleCurrent);
         if(MainActivity.keyModuleCurrent==null){
-            Log.i("miloggggg76","Es nulooos");
+
             return;
         }
+        databaseReferenceG = FirebaseDatabase.getInstance().getReference("ModulesWifi/"+ MainActivity.keyModuleCurrent);
+
         Query lastQuery = databaseReferenceG.orderByKey().limitToLast(1);
 
         lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -314,9 +330,29 @@ public class homeFragment extends Fragment {
                         DataModule dataModule = snapshot.getValue(DataModule.class);
                         if (dataModule != null) {
                             currentDataModule = dataModule;
-                            percentage = Integer.parseInt(currentDataModule.getPorcentaje());
-                            initAnimate();
-                            Log.i("miloggggg76r",String.valueOf(currentDataModule.getPorcentaje()));
+                            String porcentajeString = currentDataModule.getPorcentaje(); // "50,5"
+
+
+                            porcentajeString = porcentajeString.replace(",", ".");
+
+
+                            percentageT = (int) Float.parseFloat(porcentajeString);
+                            double mililitrosActuales = calcularLitros(mililitros, percentageT);
+                            binding.waterVol.setText(mililitrosActuales+"L");
+
+                            if(percentageT!=befpercentage){
+                                percentage = percentageT;
+                                initAnimate();
+                                befpercentage = percentageT;
+                                if(!bloquear){
+                                    binding.arrowRight.setEnabled(true);
+                                    binding.arrowLeft.setEnabled(true);
+                                    binding.progressBar.setVisibility(View.GONE);
+                                    changeDay();
+                                }
+                            }
+                            //initAnimate();
+
                         }
                     }
                 }
@@ -330,6 +366,24 @@ public class homeFragment extends Fragment {
         });
 
 
+    }
+    public static double calcularLitros(double capacidadMililitros, double porcentaje) {
+
+        double aguaMililitros = (capacidadMililitros * porcentaje) / 100;
+
+
+        double aguaLitros = aguaMililitros / 1000;
+
+
+        aguaLitros = Math.round(aguaLitros * 10.0) / 10.0;
+
+        return aguaLitros;
+    }
+
+    private void stopThread() {
+        if (consultaRunnable != null) {
+            handler.removeCallbacks(consultaRunnable);
+        }
     }
     private void restartAnimation() {
         binding.waterPorsentage.setAlpha(0.0f);
@@ -366,17 +420,58 @@ public class homeFragment extends Fragment {
         });
 
 
-       // binding.tankLine.setVisibility(View.VISIBLE);
-
 
         blinkAnimator.start();
 
 
-        /*binding.tankLine.postDelayed(() -> {
-            blinkAnimator.cancel();
-            binding.tankLine.setAlpha(0f);
-        }, 2000);*/
-    }
 
+    }
+    public static void obtenerDatos() {
+        if(MainActivity.keyModuleCurrent==null) return;;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        String fechaAyer = sdf.format(calendar.getTime());
+
+
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        String fechaAntesDeAyer = sdf.format(calendar.getTime());
+
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ModulesWifi/"+MainActivity.keyModuleCurrent);
+
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    DataModule data = snapshot.getValue(DataModule.class);
+
+                    if(data!=null){
+                        String porcentajeStr = String.valueOf(data.getPorcentaje());
+                        if (data.getFecha().equals(fechaAyer)) {
+                            percentageY = (int) Math.round(Double.parseDouble(porcentajeStr));
+                        } else if (data.getFecha().equals(fechaAntesDeAyer)) {
+                            percentageBY = Integer.valueOf(porcentajeStr);
+                        }
+                    }
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                System.out.println("Error: " + databaseError.getMessage());
+            }
+        });
+    }
 
 }

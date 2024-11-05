@@ -192,6 +192,28 @@ public class NewGroupActivity extends AppCompatActivity {
                 }
                 //
 
+                String groupName = binding.txtMl.getText().toString();
+
+                if (groupName.isEmpty()) {
+                    showEditTitleDialog("Ingrese los mililitros. ⚠\uFE0F");
+                    return;
+                }
+
+                try {
+                    int groupNumber = Integer.parseInt(groupName);
+
+                    if (groupNumber == 0) {
+                        showEditTitleDialog("Los mililitros no pueden ser cero ⚠\uFE0F");
+                        return;
+                    }
+
+                } catch (NumberFormatException e) {
+                    // Si ocurre una excepción, el texto no es un número válido
+                    showEditTitleDialog("Por favor, ingresa mililitros válido ⚠\uFE0F");
+                    return;
+                }
+
+                //
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 Member admin = new Member(currentUser.getEmail(),currentUser.getPhotoUrl().toString(),currentUser.getDisplayName());
                 members.add(admin);
@@ -206,7 +228,7 @@ public class NewGroupActivity extends AppCompatActivity {
                 }
                 List<String> moduls = new ArrayList<>();
                 moduls.add(binding.txtClave.getText().toString());
-                addGroupToFirebase(name, moduls,  emails, admin.getEmail(),binding.txtClave.getText().toString());
+                addGroupToFirebase(name, moduls,  emails, admin.getEmail(),binding.txtClave.getText().toString(),groupName);
 
             }
         });
@@ -219,11 +241,11 @@ public class NewGroupActivity extends AppCompatActivity {
             }
         });
     }
-    public void addGroupToFirebase(String name, List<String> moduls, List<String> emails, String admin,String modul) {
+    public void addGroupToFirebase(String name, List<String> moduls, List<String> emails, String admin,String modul,String ml) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         String groupId = databaseReference.child("groups").push().getKey();
-        Group group = new Group(groupId, name,  emails, admin,moduls );
+        Group group = new Group(groupId, name,  emails, admin,moduls,ml);
 
         updateUserGroups(emails,groupId,modul);
         if (groupId != null) {
@@ -265,7 +287,7 @@ public class NewGroupActivity extends AppCompatActivity {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
 
         for (String email : emails) {
-            // Crear una consulta para encontrar el usuario por email
+
             usersRef.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -273,10 +295,10 @@ public class NewGroupActivity extends AppCompatActivity {
 
                         String userId = userSnapshot.getKey();
 
-                        // Obtener la lista actual de grupos
+
                         List<String> groups = new ArrayList<>();
                         if (userSnapshot.child("groups").getValue() != null) {
-                            // Obtener la lista actual de grupos
+
                             groups = (List<String>) userSnapshot.child("groups").getValue();
                         }
 
@@ -293,7 +315,7 @@ public class NewGroupActivity extends AppCompatActivity {
                         groups.add(groupId);
 
 
-                        // Actualizar la lista de grupos del usuario
+
                         usersRef.child(userId).child("groups").setValue(groups)
                                 .addOnCompleteListener(task -> {
                                     if (!task.isSuccessful()) {

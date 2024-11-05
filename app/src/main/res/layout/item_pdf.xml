@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@color/pdf_item_background"
+    android:gravity="center_vertical"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp"
+    android:layout_marginBottom="12dp"
+    android:id="@+id/container_pdf_item">
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/img_pdf"
+        android:layout_marginEnd="10dp"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/pdf_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombred_del pdname_pdf"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="18dp"/>
+        <TextView
+            android:id="@+id/pdf_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FECHA Y PESO"
+            android:textSize="14dp"
+            android:textColor="@color/primary_color_0_5"/>
+    </LinearLayout>
+</LinearLayout>

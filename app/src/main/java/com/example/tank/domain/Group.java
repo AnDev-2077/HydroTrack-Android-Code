@@ -9,12 +9,23 @@ public class Group {
     List<String> emails;
     String admin;
     String urlImg;
+    String ml;
 
     public Group(){
 
     }
 
-    public Group(String id, String name,  List<String> emails, String admin, String urlImg,List<String> keyModuls) {
+    public Group(String id, String name, List<String> keyModuls, List<String> emails, String admin, String urlImg, String ml) {
+        this.id = id;
+        this.name = name;
+        this.keyModuls = keyModuls;
+        this.emails = emails;
+        this.admin = admin;
+        this.urlImg = urlImg;
+        this.ml = ml;
+    }
+
+    public Group(String id, String name, List<String> emails, String admin, String urlImg, List<String> keyModuls) {
         this.id = id;
         this.name = name;
         this.keyModuls = keyModuls;
@@ -22,13 +33,22 @@ public class Group {
         this.admin = admin;
         this.urlImg = urlImg;
     }
-    public Group(String id, String name,  List<String> emails, String admin, List<String> keyModuls) {
+    public Group(String id, String name,  List<String> emails, String admin, List<String> keyModuls, String ml) {
         this.id = id;
         this.name = name;
         this.keyModuls = keyModuls;
         this.emails = emails;
         this.admin = admin;
+        this.ml = ml;
 
+    }
+
+    public String getMl() {
+        return ml;
+    }
+
+    public void setMl(String ml) {
+        this.ml = ml;
     }
 
     public String getId() {

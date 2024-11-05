@@ -9,7 +9,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.tank.ui.HistoryFragment;
 import com.example.tank.ui.SettingsFragment;
-import com.example.tank.ui.homeFragment;
+import com.example.tank.ui.HomeFragment;
 
 public class MainAdapter extends FragmentStateAdapter  {
 
@@ -29,7 +29,7 @@ public class MainAdapter extends FragmentStateAdapter  {
     @Override
     public Fragment createFragment(int position) {
         if(position==0){
-            return new homeFragment();
+            return new HomeFragment();
         }
         if(position==1){
            return new HistoryFragment();
@@ -38,7 +38,7 @@ public class MainAdapter extends FragmentStateAdapter  {
             return  new SettingsFragment();
         }
 
-        return new homeFragment();
+        return new HomeFragment();
     }
 
     @Override

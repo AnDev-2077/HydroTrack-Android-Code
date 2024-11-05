@@ -33,6 +33,11 @@ android {
     buildFeatures{
         viewBinding = true
     }
+    testOptions {
+        unitTests.all {
+
+        }
+    }
 }
 
 dependencies {
@@ -48,6 +53,44 @@ dependencies {
     implementation ("com.google.android.material:material:1.4.0")
     //
     implementation ("com.google.firebase:firebase-database:20.3.0")
+    implementation ("androidx.work:work-runtime-ktx:2.7.1")
+
+
+    /*Unix*/
+
+    testImplementation ("org.mockito:mockito-core:5.0.0")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
+
+    testImplementation ("org.robolectric:robolectric:4.8.2") // O la versión más reciente
+
+    androidTestImplementation ("androidx.fragment:fragment-testing:1.6.0")
+    testImplementation ("io.mockk:mockk:1.12.3")
+    testImplementation ("junit:junit:4.13.2")
+
+    // Dependencias de JUnit
+    testImplementation ("junit:junit:4.13.2")
+
+    // Dependencias de AndroidX para pruebas
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5") // Para JUnit 4
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1") // Para Espresso
+    androidTestImplementation ("androidx.test:core:1.6.0") // Dependencia base para pruebas
+
+    androidTestImplementation ("androidx.test:rules:1.5.0")
+
+    testImplementation ("junit:junit:4.13.2")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation ("androidx.test:core:1.10.0")
+    androidTestImplementation ("androidx.test:rules:1.5.0")
+
+    implementation ("org.apache.poi:poi:5.2.3")
+    implementation ("org.apache.poi:poi-ooxml:5.2.3")
+
+    //hola
+    implementation ("com.itextpdf:html2pdf:1.0.3")
+    implementation ("com.itextpdf:kernel:2.1.7")
+    implementation ("com.dmitryborodin:pdfview-android:1.1.0")
 
 
     implementation(libs.appcompat)
@@ -58,4 +101,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+
+
+
+
+
 }

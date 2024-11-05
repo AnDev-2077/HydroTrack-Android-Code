@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AlamcenamientoActivity">
+    tools:context=".ui.GroupsActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,6 +17,7 @@
         android:background="@color/white">
 
         <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/header_background"
@@ -32,14 +33,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Almacenamiento de datos"
+                android:text="Grupos"
                 android:textColor="@color/white"
                 android:textSize="22sp"
                 />
         </LinearLayout>
 
-
         <LinearLayout
+            android:id="@+id/ver_grupos"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:orientation="horizontal"
@@ -59,7 +60,7 @@
                     android:textColor="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Generar reportes"
+                    android:text="Ver grupos"
                     android:textStyle="bold"
                     android:textSize="16dp"
                     />
@@ -67,7 +68,76 @@
                     android:textColor="@color/primary_color_0_5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Exportar reportes en formato excel"
+                    android:text="Ver los grupos en lo que estas incluido"
+                    android:textSize="16dp"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/create_group"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                >
+                <TextView
+                    android:textColor="@color/primary_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Crear grupo"
+                    android:textStyle="bold"
+                    android:textSize="16dp"
+                    />
+                <TextView
+                    android:textColor="@color/primary_color_0_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Crea un grupo familiar"
+                    android:textSize="16dp"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+        <!-- <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                >
+                <TextView
+                    android:textColor="@color/primary_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Administrar grupo"
+                    android:textStyle="bold"
+                    android:textSize="16dp"
+                    />
+                <TextView
+                    android:textColor="@color/primary_color_0_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Añade o elimina usuarios al grupo"
                     android:textSize="16dp"
                     />
             </LinearLayout>
@@ -93,7 +163,7 @@
                     android:textColor="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Administrar reportes "
+                    android:text="Eliminar grupo"
                     android:textStyle="bold"
                     android:textSize="16dp"
                     />
@@ -101,12 +171,11 @@
                     android:textColor="@color/primary_color_0_5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Eliminar reportes por fecha"
+                    android:text="Fechas y mensajes"
                     android:textSize="16dp"
                     />
             </LinearLayout>
 
-        </LinearLayout>
-
+        </LinearLayout>-->
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,8 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="water">#0468A4</color>
 
-    <!-- APP BACKGROUND-->
-    <!--02B0FE-->
+
     <color name="app_background">#DCF3FF</color>
     <color name="header_background">#5BB0FE</color>
     <color name="menu_background">#5BB0FE</color>
@@ -14,12 +13,15 @@
     <!-- home-->
     <color name="home_fecha">#FFFFFF</color>
 
-    <!--texttos-->
+
     <color name="primary_color">#000000</color>
     <color name="primary_color_0_5">#5F6062</color>
     <color name="tank_border_color">#2E2F36</color>
-    <!-- notifiacion-->
+
     <color name="noti_background">#FFFFFF</color>
     <color name="noti_text">#2D8BF1</color>
+
+    <color name="pdf_background">#E9E9E9</color>
+    <color name="pdf_item_background">#E6E6E6</color>
 
 </resources>

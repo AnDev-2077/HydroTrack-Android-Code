@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.NotificacionesActivity">
+    tools:context=".ui.NotificationsActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -74,6 +74,7 @@
                     />
             </LinearLayout>
             <Switch
+                android:id="@+id/sw_noti"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -119,6 +120,7 @@
                     />
             </LinearLayout>
             <Switch
+                android:id="@+id/sw_mant"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -157,40 +159,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Fecha y mensajes"
-                    android:textSize="16dp"
-                    />
-            </LinearLayout>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center_vertical">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
-                >
-                <TextView
-                    android:textColor="@color/primary_color"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Frecuencia de las notificaciones"
-                    android:textStyle="bold"
-                    android:textSize="16dp"
-                    />
-                <TextView
-                    android:textColor="@color/primary_color_0_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Personalizar umbrales de notificación"
                     android:textSize="16dp"
                     />
             </LinearLayout>

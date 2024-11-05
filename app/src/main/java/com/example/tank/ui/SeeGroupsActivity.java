@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -14,9 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tank.R;
 import com.example.tank.adapters.GroupsAdapter;
-import com.example.tank.adapters.MemberAdapter;
-import com.example.tank.databinding.ActivityMainBinding;
-import com.example.tank.databinding.ActivityShowGruopsBinding;
+import com.example.tank.databinding.ActivitySeeGroupsBinding;
 import com.example.tank.domain.Group;
 import com.example.tank.domain.Member;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,25 +27,25 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowGruopsActivity extends AppCompatActivity {
+public class SeeGroupsActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     GroupsAdapter memberAdapter;
     private FirebaseAuth mAuth;
     List<Group> groups;
-    ActivityShowGruopsBinding binding;
+    ActivitySeeGroupsBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_show_gruops);
+        setContentView(R.layout.activity_see_groups);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        binding  =  ActivityShowGruopsBinding.inflate(getLayoutInflater());
+        binding  =  ActivitySeeGroupsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());init();
 
 
@@ -127,7 +124,7 @@ public class ShowGruopsActivity extends AppCompatActivity {
         memberAdapter = new GroupsAdapter(groups);
         recyclerView = binding.rvGroups;
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(memberAdapter);
 
