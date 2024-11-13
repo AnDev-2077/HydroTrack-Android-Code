@@ -346,5 +346,9 @@ public class HistoryFragment extends Fragment {
             }
         }
 
+        for (int i = 0; i < semana.length; i++) {
+            semana[i] = 100 - semana[i];
+        }
+
     }
 }

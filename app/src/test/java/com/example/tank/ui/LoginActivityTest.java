@@ -59,38 +59,26 @@ public class LoginActivityTest  {
         when(mockUser.getEmail()).thenReturn("test@example.com");
         when(mockUser.getDisplayName()).thenReturn("Test User");
         when(mockUser.getPhotoUrl()).thenReturn(null);
-
         DatabaseReference mockUserRef = mock(DatabaseReference.class);
         DatabaseReference mockUsersRef = mock(DatabaseReference.class);
-
-
         when(mockDatabase.child("users")).thenReturn(mockUsersRef);
         when(mockUsersRef.push()).thenReturn(mockUserRef);
-
-
         doAnswer(invocation -> {
-
             DatabaseReference.CompletionListener listener = invocation.getArgument(1);
 
             listener.onComplete(null, null);
             return null;
         }).when(mockUserRef).setValue(any(), any());
-
-
-        String photoUrl = mockUser.getPhotoUrl() != null ? mockUser.getPhotoUrl().toString() : ""; // Maneja null aquí
+        String photoUrl = mockUser.getPhotoUrl() != null ? mockUser.getPhotoUrl().toString() : "";
         Member member = new Member(mockUser.getEmail(), photoUrl, mockUser.getDisplayName(), null, "");
         loginHandler.saveUserToDatabase(member);
-
-
         verify(mockUsersRef).push();
         verify(mockUserRef).setValue(any(), any());
     }
     @Test
     public void testOnStart_UserIsNotAuthenticated() {
         when(mockAuth.getCurrentUser()).thenReturn(null);
-
         boolean isAuthenticated = loginHandler.onStart();
-
         assertFalse(isAuthenticated);
     }
 

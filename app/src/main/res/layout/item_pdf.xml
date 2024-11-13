@@ -24,13 +24,13 @@
             android:text="Nombred_del pdname_pdf"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:textSize="18dp"/>
+            android:textSize="18sp"/>
         <TextView
             android:id="@+id/pdf_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="FECHA Y PESO"
-            android:textSize="14dp"
+            android:textSize="14sp"
             android:textColor="@color/primary_color_0_5"/>
     </LinearLayout>
 </LinearLayout>

@@ -61,50 +61,32 @@ public class MainActivityTest extends TestCase {
     @Test
     public void testGetUser_UserExists() {
         String email = "test@example.com";
-
         when(mockUser.getEmail()).thenReturn(email);
-
-
         DatabaseReference usersRef = mock(DatabaseReference.class);
         when(mockDatabaseRef.child("users")).thenReturn(usersRef);
-
         Query mockQuery = mock(Query.class);
         when(usersRef.orderByChild("email")).thenReturn(mockQuery);
         when(mockQuery.equalTo(email)).thenReturn(mockQuery);
-
-
         when(mockDataSnapshot.exists()).thenReturn(true);
-
-
         DataSnapshot mockChildSnapshot = mock(DataSnapshot.class);
         when(mockChildSnapshot.getValue(Member.class)).thenReturn(new Member(email));
-
-
         List<DataSnapshot> children = Arrays.asList(mockChildSnapshot);
         when(mockDataSnapshot.getChildren()).thenReturn(children);
-
-
-        doAnswer(invocation -> {
-            ValueEventListener listener = invocation.getArgument(0);
+        doAnswer(invocation -> { ValueEventListener listener = invocation.getArgument(0);
             listener.onDataChange(mockDataSnapshot);
             return null;
         }).when(mockQuery).addListenerForSingleValueEvent(any(ValueEventListener.class));
-
-
         mainActivityHandler.getUser(mockUser, new MainActivityHandler.UserCallback() {
             @Override
             public void onUserRetrieved(Member member) {
-                assertNotNull("El objeto Member no debería ser nulo", member); // Verificar que el miembro no sea nulo
-                assertEquals("El email del Member no coincide", email, member.getEmail()); // Verificar que el email sea el esperado
+                assertNotNull("El objeto Member no debería ser nulo", member);
+                assertEquals("El email del Usuario no coincide", email, member.getEmail());
             }
-
             @Override
             public void onError(Exception e) {
                 fail("No debería haberse llamado a onError");
             }
         });
-
-
         verify(mockDatabaseRef).child("users");
         verify(usersRef).orderByChild("email");
         verify(mockQuery).equalTo(email);
@@ -113,41 +95,29 @@ public class MainActivityTest extends TestCase {
     @Test
     public void testGetUser_UserDoesNotExist() {
         String nonExistentEmail = "nonexistent@example.com";
-
-
         when(mockUser.getEmail()).thenReturn(nonExistentEmail);
-
-
         DatabaseReference usersRef = mock(DatabaseReference.class);
         when(mockDatabaseRef.child("users")).thenReturn(usersRef);
-
         Query mockQuery = mock(Query.class);
         when(usersRef.orderByChild("email")).thenReturn(mockQuery);
         when(mockQuery.equalTo(nonExistentEmail)).thenReturn(mockQuery);
-
-
         when(mockDataSnapshot.exists()).thenReturn(false);
-
-
         doAnswer(invocation -> {
             ValueEventListener listener = invocation.getArgument(0);
             listener.onDataChange(mockDataSnapshot);
             return null;
         }).when(mockQuery).addListenerForSingleValueEvent(any(ValueEventListener.class));
 
-
         mainActivityHandler.getUser(mockUser, new MainActivityHandler.UserCallback() {
             @Override
             public void onUserRetrieved(Member member) {
                 assertNull("El objeto Member debería ser nulo ya que el usuario no existe", member); // Verificar que `member` sea nulo
             }
-
             @Override
             public void onError(Exception e) {
                 fail("No debería haberse llamado a onError");
             }
         });
-
 
         verify(mockDatabaseRef).child("users");
         verify(usersRef).orderByChild("email");
@@ -155,29 +125,22 @@ public class MainActivityTest extends TestCase {
     }
     @Test
     public void testGetUserGroups() {
-
         Member member = new Member();
         member.setGroups(Arrays.asList("groupId1", "groupId2"));
-
-
         DatabaseReference mockGroupsRef = mock(DatabaseReference.class);
         DatabaseReference mockGroupId1Ref = mock(DatabaseReference.class);
         DatabaseReference mockGroupId2Ref = mock(DatabaseReference.class);
-
         when(mockDatabaseRef.child("groups")).thenReturn(mockGroupsRef);
         when(mockGroupsRef.child("groupId1")).thenReturn(mockGroupId1Ref);
         when(mockGroupsRef.child("groupId2")).thenReturn(mockGroupId2Ref);
-
-
         doAnswer(invocation -> {
             ValueEventListener listener = invocation.getArgument(0);
             DataSnapshot mockSnapshot = mock(DataSnapshot.class);
             when(mockSnapshot.exists()).thenReturn(true);
-            when(mockSnapshot.getValue(Group.class)).thenReturn(new Group());  // Simula un grupo
+            when(mockSnapshot.getValue(Group.class)).thenReturn(new Group());
             listener.onDataChange(mockSnapshot);
             return null;
         }).when(mockGroupId1Ref).addListenerForSingleValueEvent(any(ValueEventListener.class));
-
         doAnswer(invocation -> {
             ValueEventListener listener = invocation.getArgument(0);
             DataSnapshot mockSnapshot = mock(DataSnapshot.class);
@@ -187,13 +150,11 @@ public class MainActivityTest extends TestCase {
             return null;
         }).when(mockGroupId2Ref).addListenerForSingleValueEvent(any(ValueEventListener.class));
 
-
         mainActivityHandler.getUserGroups(member, new MainActivityHandler.GroupCallback() {
             @Override
             public void onGroupsRetrieved(List<Group> groups) {
                 assertEquals(2, groups.size());
             }
-
             @Override
             public void onError(Exception e) {
                 fail("Should not have called onError");

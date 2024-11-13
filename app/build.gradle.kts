@@ -6,7 +6,17 @@ plugins {
 android {
     namespace = "com.example.tank"
     compileSdk = 34
-
+    packagingOptions {
+        exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/LICENSE")
+        exclude("META-INF/LICENSE.txt")
+        exclude("META-INF/license.txt")
+        exclude("META-INF/NOTICE")
+        exclude("META-INF/NOTICE.txt")
+        exclude("META-INF/notice.txt")
+        exclude("META-INF/ASL2.0")
+        exclude("META-INF/*.kotlin_module")
+    }
     defaultConfig {
         applicationId = "com.example.tank"
         minSdk = 26
@@ -15,6 +25,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -38,6 +49,7 @@ android {
 
         }
     }
+
 }
 
 dependencies {
@@ -81,16 +93,20 @@ dependencies {
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation ("androidx.test:core:1.10.0")
+    /*androidTestImplementation ("androidx.test:core:1.10.0")*/
     androidTestImplementation ("androidx.test:rules:1.5.0")
 
     implementation ("org.apache.poi:poi:5.2.3")
     implementation ("org.apache.poi:poi-ooxml:5.2.3")
 
     //hola
-    implementation ("com.itextpdf:html2pdf:1.0.3")
-    implementation ("com.itextpdf:kernel:2.1.7")
-    implementation ("com.dmitryborodin:pdfview-android:1.1.0")
+    implementation ("com.github.mhiew:android-pdf-viewer:3.2.0-beta.1")
+
+    //
+    implementation ("org.jsoup:jsoup:1.15.3")
+
+    // Para generar el PDF
+    implementation ("com.itextpdf:itext7-core:7.2.2")
 
 
     implementation(libs.appcompat)

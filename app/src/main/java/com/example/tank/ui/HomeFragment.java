@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -369,15 +370,18 @@ public class HomeFragment extends Fragment {
     }
     public static double calcularLitros(double capacidadMililitros, double porcentaje) {
 
-        double aguaMililitros = (capacidadMililitros * porcentaje) / 100;
+       /* double aguaMililitros = (capacidadMililitros * porcentaje) / 100;
 
 
         double aguaLitros = aguaMililitros / 1000;
 
 
-        aguaLitros = Math.round(aguaLitros * 10.0) / 10.0;
+        aguaLitros = Math.round(aguaLitros * 10.0) / 10.0;*/
 
-        return aguaLitros;
+
+
+        return Math.round(capacidadMililitros * (porcentaje / 100) * 10.0) / 10.0;
+    
     }
 
     private void stopThread() {
@@ -441,6 +445,8 @@ public class HomeFragment extends Fragment {
         calendar.add(Calendar.DAY_OF_YEAR, -1);
         String fechaAntesDeAyer = sdf.format(calendar.getTime());
 
+        Log.i("poip024",fechaAyer+fechaAntesDeAyer);
+
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ModulesWifi/"+MainActivity.keyModuleCurrent);
 
@@ -452,11 +458,14 @@ public class HomeFragment extends Fragment {
                     DataModule data = snapshot.getValue(DataModule.class);
 
                     if(data!=null){
+
                         String porcentajeStr = String.valueOf(data.getPorcentaje());
                         if (data.getFecha().equals(fechaAyer)) {
                             percentageY = (int) Math.round(Double.parseDouble(porcentajeStr));
+                            Log.i("poip024","Fecha: " + percentageY );
                         } else if (data.getFecha().equals(fechaAntesDeAyer)) {
                             percentageBY = Integer.valueOf(porcentajeStr);
+                            Log.i("poip024","Fecha: " + percentageY );
                         }
                     }
 

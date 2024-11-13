@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tank.R;
+import com.example.tank.databinding.ActivitySeePdfBinding;
+import com.example.tank.ui.SeePdfActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -49,8 +51,9 @@ public class AdapterPDF extends RecyclerView.Adapter<AdapterPDF.ViewHolder> {
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(item.get(position)), "application/pdf");
+                Intent intent = new Intent(context, SeePdfActivity.class);
+                intent.putExtra("path", item.get(position).getAbsolutePath());
+                intent.putExtra("name",item.get(position).getName()) ;
                 context.startActivity(intent);
             }
         });
