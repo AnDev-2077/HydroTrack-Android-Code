@@ -55,7 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MainActivity extends AppCompatActivity {
 
         ActivityMainBinding binding;
-        private static final int PERMISSION_REQUEST_CODE = 123;
+
         Dialog dialog;
         SharedPreferences sharedPreferences;
        public Member member = null;
@@ -89,16 +89,7 @@ public class MainActivity extends AppCompatActivity {
             initTabLayaut();
 
 
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
 
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                        PERMISSION_REQUEST_CODE);
-            } else {
-
-
-            }
         }
         private void init(){
 
@@ -181,18 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
             dialog.show();
         }
-        @Override
-        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            if (requestCode == PERMISSION_REQUEST_CODE) {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                   // proceedWithNotifications();
-                } else {
-
-                }
-            }
-        }
         void getUser(){
 
             mAuth = FirebaseAuth.getInstance();
@@ -235,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Group grupo = snapshot.getValue(Group.class);
-                        Log.i("milo78451", keyModuleCurrent);
+
                         binding.titleG.setText(grupo.getName());
                         HomeFragment.bloquear = false;
                     }
@@ -266,7 +246,8 @@ public class MainActivity extends AppCompatActivity {
                             if (grupo != null) {
                                 groupsUser.add(grupo);
                                 //Solo del primero
-                                HomeFragment.mililitros =Integer.parseInt(grupo.getMl());
+                                HomeFragment.mililitros = Float.parseFloat(grupo.getMl());
+
 
                             }
                         }

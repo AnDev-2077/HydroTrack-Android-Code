@@ -169,8 +169,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
 
-        SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+        SharedPreferences prefs = getSharedPreferences("MyPrefs2", MODE_PRIVATE);
+        boolean isFirstRun = prefs.getBoolean("isFirstRun2", true);
 
         if (isFirstRun) {
 
@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("isFirstRun", false);
+            editor.putBoolean("isFirstRun2", false);
             editor.apply();
         }
 

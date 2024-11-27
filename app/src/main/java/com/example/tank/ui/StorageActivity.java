@@ -101,7 +101,12 @@ public class StorageActivity extends AppCompatActivity {
 
         binding.back.setOnClickListener(v -> finish());
 
-
+        if (ActivityCompat.checkSelfPermission(StorageActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(StorageActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+        }
 
         binding.btnReportes.setOnClickListener(v -> {
             Intent intent = new Intent(StorageActivity.this, ListPdfActivity.class);

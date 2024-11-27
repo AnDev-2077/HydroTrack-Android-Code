@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.NotificationsActivity">
+    tools:context=".ui.remindersActivity"
+    android:fitsSystemWindows="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -63,18 +64,12 @@
                     android:layout_height="wrap_content"
                     android:text="Notificaciones generales"
                     android:textStyle="bold"
-                    android:textSize="16dp"
+                    android:textSize="20sp"
                     />
-                <TextView
-                    android:textColor="@color/primary_color_0_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Desactivar todas las notificaciones"
-                    android:textSize="16dp"
-                    />
+
             </LinearLayout>
             <Switch
-                android:id="@+id/sw_noti"
+                android:id="@+id/swit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -86,89 +81,46 @@
                 android:trackTint="@color/header_background" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:paddingStart="30dp"
-            android:paddingEnd="15dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center_vertical">
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:id="@+id/fecha_container"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:backgroundTint="@color/white"
+            app:cardCornerRadius="8dp">
             <LinearLayout
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
-                >
-                <TextView
-                    android:textColor="@color/primary_color"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Modo mantenimiento"
-                    android:textStyle="bold"
-                    android:textSize="16dp"
-                    />
-                <TextView
-                    android:textColor="@color/primary_color_0_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Desactivarlas momentáneamente"
-                    android:textSize="16dp"
-                    />
-            </LinearLayout>
-            <Switch
-                android:id="@+id/sw_mant"
+                android:id="@+id/calendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:thumbTint="@color/white"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
-                android:trackTint="@color/header_background" />
+                android:layout_marginStart="28dp"
+                android:layout_marginEnd="15dp"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                android:padding="10dp"
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <LinearLayout
-            android:id="@+id/btn_recorda"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center_vertical">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
                 >
                 <TextView
-                    android:textColor="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Configurar recordatorios"
+                    android:text="- / - / ----"
                     android:textStyle="bold"
-                    android:textSize="16dp"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:id="@+id/txt_fecha"
                     />
-                <TextView
-                    android:textColor="@color/primary_color_0_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fecha y mensajes"
-                    android:textSize="16dp"
-                    />
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/calendar"/>
 
-        </LinearLayout
->
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

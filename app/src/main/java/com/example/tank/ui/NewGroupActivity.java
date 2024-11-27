@@ -185,34 +185,41 @@ public class NewGroupActivity extends AppCompatActivity {
                 }
 
 
-                //Verificar clave del producto
+
                 if(!claveVerificada){
                     showEditTitleDialog("Verificar clave ⚠\uFE0F");
                     return;
                 }
-                //
+
 
                 String groupName = binding.txtMl.getText().toString();
 
                 if (groupName.isEmpty()) {
-                    showEditTitleDialog("Ingrese los mililitros. ⚠\uFE0F");
+                    showEditTitleDialog("Ingrese los mililitros. ⚠️");
+                    return;
+                }
+
+
+                if (!groupName.matches("[0-9]+([.,][0-9]+)?")) {
+                    showEditTitleDialog("Formato de número incorrecto. ⚠️");
                     return;
                 }
 
                 try {
-                    int groupNumber = Integer.parseInt(groupName);
+
+                    float groupNumber = Float.parseFloat(groupName);
+
 
                     if (groupNumber == 0) {
-                        showEditTitleDialog("Los mililitros no pueden ser cero ⚠\uFE0F");
+                        showEditTitleDialog("Los mililitros no pueden ser cero ⚠️");
                         return;
                     }
 
                 } catch (NumberFormatException e) {
                     // Si ocurre una excepción, el texto no es un número válido
-                    showEditTitleDialog("Por favor, ingresa mililitros válido ⚠\uFE0F");
+                    showEditTitleDialog("Por favor, ingresa mililitros válido ⚠️");
                     return;
                 }
-
                 //
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 Member admin = new Member(currentUser.getEmail(),currentUser.getPhotoUrl().toString(),currentUser.getDisplayName());

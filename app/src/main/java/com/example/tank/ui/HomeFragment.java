@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
     public static int percentageY= 0;
     public static int percentageBY = 0;
 
-    public static int mililitros = 0;
+    public static float mililitros = 0;
     public static int mlT = 0;
     public static int mlY= 50;
     public static int mlBY = 60;
@@ -173,14 +173,6 @@ public class HomeFragment extends Fragment {
             alphaAnimator2.setDuration(800);
             alphaAnimator2.start();
 
-            /*translationAnimator = ObjectAnimator.ofFloat(binding.waterMl, "translationY", binding.containerWater.getHeight()/2, 0);
-            translationAnimator.setDuration(800);
-            translationAnimator.setInterpolator(new DecelerateInterpolator());
-            translationAnimator.start();
-
-            alphaAnimator2 = ObjectAnimator.ofFloat(binding.waterMl, "alpha", 0f, 1f);
-            alphaAnimator2.setDuration(2000);
-            alphaAnimator2.start();*/
         });
     }
 

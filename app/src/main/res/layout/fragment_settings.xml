@@ -197,7 +197,7 @@
 
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/btn_perso"
+            android:id="@+id/btn_help"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:orientation="horizontal"
@@ -207,6 +207,48 @@
             android:focusable="true"
             android:background="?attr/selectableItemBackground"
             android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:src="@drawable/help_circle"
+                android:layout_marginEnd="20dp"
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                >
+                <TextView
+                    android:textColor="@color/primary_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ayuda"
+                    android:textStyle="bold"
+                    android:textSize="16dp"
+                    />
+                <TextView
+                    android:textColor="@color/primary_color_0_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manual de uso y preguntas frecuentes"
+                    android:textSize="16dp"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/btn_perso"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:visibility="invisible">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="40dp"
@@ -237,46 +279,7 @@
             </LinearLayout>
 
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center_vertical">
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="40dp"
-                android:src="@drawable/help"
-                android:layout_marginEnd="20dp"
-                />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
-                >
-                <TextView
-                    android:textColor="@color/primary_color"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ayuda"
-                    android:textStyle="bold"
-                    android:textSize="16dp"
-                    />
-                <TextView
-                    android:textColor="@color/primary_color_0_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Manual de uso y preguntas frecuentes"
-                    android:textSize="16dp"
-                    />
-            </LinearLayout>
 
-        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>

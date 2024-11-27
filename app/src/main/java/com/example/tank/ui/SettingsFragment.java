@@ -166,6 +166,13 @@ public class SettingsFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        binding.btnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), HelpActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 }
